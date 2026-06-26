@@ -222,6 +222,40 @@ Then open `http://localhost:3000/` or call the API.
 - No network calls during analysis
 - JSON body limit: `256kb`
 
+## Runbook (setup, run, redeploy)
+
+Reproducible from a clean checkout — no manual debugging required.
+
+**Local setup + run**
+
+```bash
+npm install        # install dependencies (express, cors, zod)
+npm test           # 10/10 sample cases + edge + HTTP-contract checks
+npm start          # serves on 0.0.0.0:${PORT:-3000}
+curl localhost:3000/health        # -> {"status":"ok"}
+```
+
+**Docker**
+
+```bash
+docker build -t project-chimera .
+docker run --rm -p 3000:3000 -e PORT=3000 project-chimera
+```
+
+**Deploy / redeploy on Railway**
+
+The service is connected to this GitHub repo, so any push to `master` triggers an
+automatic Dockerfile build + deploy. Manual redeploy:
+
+```bash
+railway up                 # build + deploy current directory
+railway domain             # show / create the public HTTPS URL
+railway logs               # tail deploy logs
+```
+
+No secrets are required to run. `PORT` is the only environment variable (injected by the
+host; defaults to `3000`). See `.env.example`.
+
 ## Assumptions and limitations
 
 - Hidden judging can use cases beyond the sample pack, so rules are generalized rather than exact-case memorized.
