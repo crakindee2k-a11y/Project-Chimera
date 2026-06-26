@@ -152,6 +152,16 @@ assert(!amts.includes(2), 'clock-time digit must not be an amount');
 assert(!amts.includes(9301), 'txn-id digits must not be an amount');
 assert(!amts.includes(2026), 'date digits must not be an amount');
 
+// 8. Routine settlement-delay severity/escalation alignment (SAMPLE-09 shape).
+const settle = analyzeTicket(samplePack.cases.find((c) => c.id === 'SAMPLE-09').input);
+assert.strictEqual(settle.severity, 'medium', 'mid-value settlement delay => medium severity');
+assert.strictEqual(settle.human_review_required, false, 'routine consistent settlement => no human review');
+
+// 9. Vague "other" insufficient_data must not force human review (SAMPLE-06 shape).
+const vague = analyzeTicket(samplePack.cases.find((c) => c.id === 'SAMPLE-06').input);
+assert.strictEqual(vague.case_type, 'other', 'vague complaint => other');
+assert.strictEqual(vague.human_review_required, false, 'vague other => no human review');
+
 console.log(`Analyzer tests passed. Core sample matches: ${exactCoreMatches}/${samplePack.cases.length}`);
 
 // --- HTTP contract (server) edge cases: 400 malformed, 422 empty complaint, 200 valid ---

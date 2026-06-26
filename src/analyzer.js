@@ -317,7 +317,7 @@ function buildOutput(context, caseType, relevant, evidence) {
   }
 
   if (context.ambiguousMatch && caseType === 'wrong_transfer') humanReview = false;
-  else if (evidence.evidenceVerdict === 'insufficient_data') humanReview = true;
+  else if (evidence.evidenceVerdict === 'insufficient_data' && caseType !== 'other') humanReview = true;
 
   return {
     ticket_id: input.ticket_id,
@@ -343,7 +343,7 @@ function determineSeverity(context, caseType, relevant, evidenceVerdict) {
   if (['duplicate_payment', 'agent_cash_in_issue'].includes(caseType)) return 'high';
   if (caseType === 'wrong_transfer') return amount >= 5000 ? 'high' : 'medium';
   if (caseType === 'payment_failed') return amount >= 1000 || /deduct/i.test(context.complaint) ? 'high' : 'medium';
-  if (caseType === 'merchant_settlement_delay') return amount >= 10000 || context.input.user_type === 'merchant' ? 'high' : 'medium';
+  if (caseType === 'merchant_settlement_delay') return amount >= 25000 ? 'high' : 'medium';
   if (caseType === 'refund_request') return amount >= 3000 ? 'medium' : 'low';
   return 'medium';
 }
@@ -371,10 +371,11 @@ function isContestedRefund(context, evidenceVerdict) {
 
 function shouldRequireHumanReview(context, caseType, relevant, evidenceVerdict, severity) {
   if (['critical', 'high'].includes(severity)) return true;
-  if (['wrong_transfer', 'agent_cash_in_issue', 'merchant_settlement_delay', 'phishing_or_social_engineering'].includes(caseType)) return true;
-  if (['inconsistent', 'insufficient_data'].includes(evidenceVerdict)) return true;
+  if (['wrong_transfer', 'agent_cash_in_issue', 'phishing_or_social_engineering'].includes(caseType)) return true;
+  if (evidenceVerdict === 'inconsistent') return true;
+  if (evidenceVerdict === 'insufficient_data' && caseType !== 'other') return true;
   if (context.hasPromptInjection || context.hasFraudRisk) return true;
-  if ((relevant?.amount || 0) >= 5000) return true;
+  if ((relevant?.amount || 0) >= 5000 && caseType !== 'merchant_settlement_delay') return true;
   return false;
 }
 
