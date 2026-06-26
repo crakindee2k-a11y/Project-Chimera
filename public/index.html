@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QueueStorm Investigator</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="eyebrow">SUST CSE Carnival 2026 · Preliminary</p>
+      <h1>QueueStorm Investigator</h1>
+      <p>Paste ticket JSON, call <code>/analyze-ticket</code>, inspect safe decision output.</p>
+    </section>
+
+    <section class="panel controls">
+      <label for="apiBase">API base URL</label>
+      <div class="row">
+        <input id="apiBase" type="url" placeholder="http://localhost:3000" autocomplete="off">
+        <button id="healthBtn" type="button">Check /health</button>
+      </div>
+      <p id="healthStatus" class="muted">Same-origin default if blank.</p>
+    </section>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="panelHeader">
+          <h2>Request JSON</h2>
+          <button id="sampleBtn" type="button">Load sample</button>
+        </div>
+        <textarea id="requestBody" spellcheck="false"></textarea>
+        <div class="row actions">
+          <button id="submitBtn" type="button">Analyze ticket</button>
+          <span id="latency" class="muted"></span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panelHeader">
+          <h2>Response</h2>
+          <span id="httpStatus" class="badge">idle</span>
+        </div>
+        <pre id="responseBox">Click Analyze ticket.</pre>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
